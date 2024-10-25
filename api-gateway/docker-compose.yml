@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  auth-service:
+    build:
+      context: ../auth-service
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.services.auth.loadbalancer.server.port=3000"
+
+  billing-service:
+    build:
+      context: ../billing-service
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.billing.rule=PathPrefix(`/billing`)"
+      - "traefik.http.services.billing.loadbalancer.server.port=3000"
