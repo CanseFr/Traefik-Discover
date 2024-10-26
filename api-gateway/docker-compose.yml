@@ -28,3 +28,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.billing.rule=PathPrefix(`/billing`)"
       - "traefik.http.services.billing.loadbalancer.server.port=3000"
+
+  user-service:
+    build:
+      context: ../user-service
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.user.rule=PathPrefix(`/user`)"
+      - "traefik.http.services.user.loadbalancer.server.port=3000"
