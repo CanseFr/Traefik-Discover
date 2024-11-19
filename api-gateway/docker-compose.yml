@@ -1,8 +1,14 @@
 version: '3'
 
+networks:
+  my_network:
+    driver: bridge  # Utilisez le driver par défaut
+
 services:
   traefik:
     image: traefik:v2.10
+    networks:
+      - my_network
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -16,6 +22,8 @@ services:
   auth-service:
     build:
       context: ../auth-service
+    networks:
+      - my_network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
@@ -24,6 +32,8 @@ services:
   billing-service:
     build:
       context: ../billing-service
+    networks:
+      - my_network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.billing.rule=PathPrefix(`/billing`)"
@@ -32,7 +42,31 @@ services:
   user-service:
     build:
       context: ../user-service
+    networks:
+      - my_network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.user.rule=PathPrefix(`/user`)"
       - "traefik.http.services.user.loadbalancer.server.port=3000"
+
+  mail-service:
+    build:
+      context: ../mail-service
+    networks:
+      - my_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mail.rule=PathPrefix(`/mail`)"
+      - "traefik.http.services.mail.loadbalancer.server.port=3000"
+
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    networks:
+      - my_network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+#    environment:
+#      RABBITMQ_DEFAULT_USER: user
+#      RABBITMQ_DEFAULT_PASS: password
+    restart: always

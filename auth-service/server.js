@@ -5,6 +5,7 @@ const PORT = 3000;
 app.use(express.json());
 
 const cors = require('cors');
+const {getInfoFromQueue} = require("./broker");
 
 let corsOptions = {
     origin: ['http://localhost:3000'],
@@ -23,4 +24,5 @@ app.post('/auth/verify', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Auth service listening on port ${PORT}`);
+    getInfoFromQueue();
 });

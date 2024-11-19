@@ -52,6 +52,36 @@ function App() {
     fetchUsers();
   }
 
+
+  const handleSendBill = () => {
+    const sendBilling = async () => {
+      try {
+        axios.get('http://localhost/billing/send-mail', {
+          headers: { Authorization: "fake-token" } // Envoi du token d'authentification
+        });
+      } catch (error) {
+        console.error('Erreur lors de la récupération de user:', error);
+      }
+    };
+
+    sendBilling();
+  }
+
+  const handleGetHello = () => {
+    const getHello = async () => {
+      try {
+        axios.get('http://localhost/mail/', {
+          headers: { Authorization: "fake-token" } // Envoi du token d'authentification
+        }).then((res)=>console.log(res));
+      } catch (error) {
+        console.error('Erreur lors de la récupération de user:', error);
+      }
+    };
+
+    getHello();
+  }
+
+
   return (
       <div>
 
@@ -78,6 +108,14 @@ function App() {
           <button onClick={handleGetUsers}>Get users</button>
           {users && (users.map((item) => item))}
         </div>
+
+        <div>
+          <button onClick={handleSendBill}>Send</button>
+        </div>
+        <div>
+          <button onClick={handleGetHello}>Get hello response in consol by mail service</button>
+        </div>
+
       </div>
   );
 }
